@@ -1,0 +1,55 @@
+name: pavucontrol-qt AppImage
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  schedule:
+    - cron: "0 16 1/7 * *"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: build
+      run: |
+        sudo apt update
+        sudo apt install liblxqt
+        sudo apt install libfuse2 libdbus-1-dev libx11-dev libxinerama-dev libxrandr-dev libgdk-pixbuf2.0-dev libasound2-dev libpulse-dev pulseaudio
+        sudo apt install libxss-dev libglib2.0-dev libpango1.0-dev libgtk-3-dev libxdg-basedir-dev libnotify-dev libudev-dev
+        sudo apt install ninja-build autotools-dev autoconf automake build-essential meson
+        wget https://raw.githubusercontent.com/Samueru-sama/pavucontrol-qt-AppImage/main/pavucontrol-qt-AppImage.sh
+        chmod a+x ./pavucontrol-qt-AppImage.sh
+        ./pavucontrol-qt-AppImage.sh
+        mkdir dist
+        mv *AppImage dist/
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: pavucontrol-qt-x86_64.AppImage
+        path: 'dist'
+        
+  release:
+      needs: [build]
+      permissions: write-all
+      runs-on: ubuntu-latest
+
+      steps:
+        - uses: actions/download-artifact@v1
+          with:
+            name: pavucontrol-qt-x86_64.AppImage
+
+        - name: release
+          uses: marvinpinto/action-automatic-releases@latest
+          with:
+            title: Continuous build
+            automatic_release_tag: continuous
+            prerelease: false
+            draft: false
+            files: |
+              pavucontrol-qt-x86_64.AppImage
+            repo_token: ${{ secrets.GITHUB_TOKEN }}
