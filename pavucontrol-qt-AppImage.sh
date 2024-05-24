@@ -17,6 +17,7 @@ APPIMAGETOOL=$(wget -q https://api.github.com/repos/probonopd/go-appimage/releas
 # DOWNLOAD AND BUILD PAVUCONTROL
 CURRENTDIR="$(readlink -f "$(dirname "$0")")" # DO NOT MOVE THIS
 wget "$REPO" -O download.tar.xz && tar fx *tar* && cd pavucontrol* \
+&& sed -i 's/6.6.0/6.4.2/g' ./CMakeLists.txt \
 && mkdir ./build && cd ./build && cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr .. \
 && make -j$(nproc) \
 && DESTDIR="$CURRENTDIR" make install \
