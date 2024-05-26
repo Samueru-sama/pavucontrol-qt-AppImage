@@ -3,6 +3,7 @@
 # TURNING THE NATIVE DEBIAN PACKAGE INTO AN APPIMAGE BECAUSE I CAN'T GET THIS TO COMPILE ON DEBIAN 20.04 KEK.
 
 set -u
+ARCH=x86_64
 APP=pavucontrol-qt
 APPDIR="$APP.AppDir"
 REPO="http://ftp.us.debian.org/debian/pool/main/p/pavucontrol-qt/pavucontrol-qt_1.2.0-1_amd64.deb"
