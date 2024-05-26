@@ -17,7 +17,7 @@ jobs:
     - name: build
       run: |
         sudo apt update
-        sudo apt install libfuse2 qt6-tools-dev pavucontrol-qt
+        sudo apt install libfuse2 pavucontrol-qt
         sudo apt install ninja-build autotools-dev autoconf automake build-essential meson cmake
         wget https://raw.githubusercontent.com/Samueru-sama/pavucontrol-qt-AppImage/main/debian-pavucontrol-qt-AppImage.sh
         chmod a+x ./debian-pavucontrol-qt-AppImage.sh
