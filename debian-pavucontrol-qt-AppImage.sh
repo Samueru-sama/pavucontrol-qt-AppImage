@@ -24,6 +24,9 @@ cat >> ./AppRun << 'EOF'
 #!/bin/sh
 export LD_LIBRARY_PATH="/lib"
 CURRENTDIR="$(dirname "$(readlink -f "$0")")"
+if [ -z "$QT_QPA_PLATFORMTHEME" ] && [ "$XDG_CURRENT_DESKTOP" != "KDE" ]; then # Not sure if this is the right way
+	export QT_QPA_PLATFORMTHEME=gtk3
+fi
 "$CURRENTDIR/usr/bin/DUMMY" "$@"
 EOF
 sed -i "s|DUMMY|$EXEC|g" ./AppRun
