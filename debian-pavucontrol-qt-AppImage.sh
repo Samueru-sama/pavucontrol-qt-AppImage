@@ -22,7 +22,7 @@ wget $REPO && ar vx ./"$APP"* && tar fx ./data.tar* && mv ./usr .. && cd .. && r
 # AppRun
 cat >> ./AppRun << 'EOF'
 #!/bin/sh
-export LD_LIBRARY_PATH="/lib"
+export LD_LIBRARY_PATH=/lib:/lib64:/lib/x86_64-linux-gnu:/usr/lib
 CURRENTDIR="$(dirname "$(readlink -f "$0")")"
 if [ -z "$QT_QPA_PLATFORMTHEME" ] && [ "$XDG_CURRENT_DESKTOP" != "KDE" ]; then # Not sure if this is the right way
 	export QT_QPA_PLATFORMTHEME=gtk3
