@@ -35,13 +35,20 @@ HARD_LINKS=1 ./lib4bin "$(command -v pavucontrol-qt)"
 rm -f ./lib4bin
 
 # DELOY QT
-mkdir -p ./shared/lib/qt6
-cp -r /usr/lib/qt6/plugins ./shared/lib/qt6
+mkdir -p ./shared/lib/qt6/plugins
+cp -r /usr/lib/qt6/plugins/iconengines       ./shared/lib/qt6/plugins
+cp -r /usr/lib/qt6/plugins/imageformats      ./shared/lib/qt6/plugins
+cp -r /usr/lib/qt6/plugins/platforms         ./shared/lib/qt6/plugins
+cp -r /usr/lib/qt6/plugins/platformthemes    ./shared/lib/qt6/plugins
+cp -r /usr/lib/qt6/plugins/styles            ./shared/lib/qt6/plugins
+cp -r /usr/lib/qt6/plugins/xcbglintegrations ./shared/lib/qt6/plugins
+
 ldd ./shared/lib/qt6/plugins/*/* \
   | awk -F"[> ]" '{print $4}' | xargs -I {} cp -nv {} ./shared/lib
 
 rm -f ./shared/lib/lib.path || true # forces sharun to regenerate the file
 export VERSION=$(./AppRun --version | awk 'FNR==1 {print $2; exit}')
+[ -n "$VERSION" ] || VERSION=unknown 
 
 # MAKE APPIAMGE WITH FUSE3 COMPATIBLE APPIMAGETOOL
 cd ..
