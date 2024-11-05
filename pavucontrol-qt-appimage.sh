@@ -48,7 +48,7 @@ ldd ./shared/lib/qt6/plugins/*/* 2>/dev/null \
 
 find ./shared/lib -type f -exec strip -s -R .comment --strip-unneeded {} ';'
 
-rm -f ./shared/lib/lib.path || true # forces sharun to regenerate the file
+./sharun -g # makes sharun generate the lib.path file
 VERSION=$(./AppRun --version 2>/dev/null | awk 'NR==1 {print $2; exit}')
 if [ -z "$VERSION" ]; then
 	VERSION=$(pacman -Q pavucontrol-qt | awk 'NR==1 {print $2; exit}')
