@@ -8,7 +8,8 @@ ICON="https://raw.githubusercontent.com/PapirusDevelopmentTeam/papirus-icon-them
 APPIMAGETOOL="https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-$ARCH.AppImage"
 UPINFO="gh-releases-zsync|$GITHUB_REPOSITORY_OWNER|rofi-AppImage|continuous|*$ARCH.AppImage.zsync"
 LIB4BN="https://raw.githubusercontent.com/VHSgunzo/sharun/refs/heads/main/lib4bin"
-SHARUN="https://github.com/VHSgunzo/sharun/releases/download/v0.0.2/sharun-$ARCH"
+SHARUN="$(wget -q https://api.github.com/repos/VHSgunzo/sharun/releases -O - \
+	| sed 's/[()",{} ]/\n/g' | grep -oi "https.*-$ARCH$" | head -1)"
 
 # Prepare AppDir
 mkdir -p ./"$APP"/AppDir/usr/share/applications
