@@ -42,9 +42,12 @@ cp -r /usr/lib/qt6/plugins/platforms         ./shared/lib/qt6/plugins
 cp -r /usr/lib/qt6/plugins/platformthemes    ./shared/lib/qt6/plugins
 cp -r /usr/lib/qt6/plugins/styles            ./shared/lib/qt6/plugins
 cp -r /usr/lib/qt6/plugins/xcbglintegrations ./shared/lib/qt6/plugins
+cp -r /usr/lib/qt6/plugins/wayland-*         ./shared/lib/qt6/plugins
 
 ldd ./shared/lib/qt6/plugins/*/* \
   | awk -F"[> ]" '{print $4}' | xargs -I {} cp -nv {} ./shared/lib
+
+find ./shared/lib -type f -exec strip -s -R .comment --strip-unneeded {} ';'
 
 rm -f ./shared/lib/lib.path || true # forces sharun to regenerate the file
 VERSION=$(./AppRun --version 2>/dev/null | awk 'NR==1 {print $2; exit}')
