@@ -22,7 +22,6 @@ ln -s ./multimedia-volume-control.svg ./.DirIcon
 cat >> ./AppRun << 'EOF'
 #!/bin/sh
 CURRENTDIR="$(dirname "$(readlink -f "$0")")"
-export QT_PLUGIN_PATH="$CURRENTDIR"/shared/lib/qt6/plugins
 "$CURRENTDIR/bin/pavucontrol-qt" "$@"
 EOF
 chmod +x ./AppRun
