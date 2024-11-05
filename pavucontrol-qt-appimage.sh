@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -u
+set -eu
 export ARCH="$(uname -m)"
 export APPIMAGE_EXTRACT_AND_RUN=1
 APP=pavucontrol-qt
@@ -47,8 +47,11 @@ ldd ./shared/lib/qt6/plugins/*/* \
   | awk -F"[> ]" '{print $4}' | xargs -I {} cp -nv {} ./shared/lib
 
 rm -f ./shared/lib/lib.path || true # forces sharun to regenerate the file
-export VERSION=$(./AppRun --version | awk 'FNR==1 {print $2; exit}')
-[ -n "$VERSION" ] || VERSION=unknown 
+VERSION=$(./AppRun --version 2>/dev/null | awk 'NR==1 {print $2; exit}')
+if [ -z "$VERSION" ]; then
+	VERSION=$(pacman -Q pavucontrol-qt | awk 'NR==1 {print $2; exit}')
+fi
+export VERSION
 
 # MAKE APPIAMGE WITH FUSE3 COMPATIBLE APPIMAGETOOL
 cd ..
