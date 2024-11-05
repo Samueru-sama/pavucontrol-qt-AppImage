@@ -44,8 +44,8 @@ cp -r /usr/lib/qt6/plugins/styles            ./shared/lib/qt6/plugins
 cp -r /usr/lib/qt6/plugins/xcbglintegrations ./shared/lib/qt6/plugins
 cp -r /usr/lib/qt6/plugins/wayland-*         ./shared/lib/qt6/plugins
 
-ldd ./shared/lib/qt6/plugins/*/* \
-  | awk -F"[> ]" '{print $4}' | xargs -I {} cp -nv {} ./shared/lib
+ldd ./shared/lib/qt6/plugins/*/* 2>/dev/null \
+  | awk -F"[> ]" '{print $4}' | xargs -I {} cp -nv {} ./shared/lib || true
 
 find ./shared/lib -type f -exec strip -s -R .comment --strip-unneeded {} ';'
 
