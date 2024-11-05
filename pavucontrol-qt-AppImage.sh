@@ -1,47 +1,48 @@
 #!/bin/sh
 
 set -u
-ARCH=x86_64
-APP=pavucontrol
-APPDIR="$APP".AppDir
-REPO="https://github.com/lxqt/pavucontrol-qt/releases/download/2.0.0/pavucontrol-qt-2.0.0.tar.xz"
+export ARCH="$(uname -m)"
+export APPIMAGE_EXTRACT_AND_RUN=1
+APP=pavucontrol-qt
 ICON="https://raw.githubusercontent.com/PapirusDevelopmentTeam/papirus-icon-theme/master/Papirus/64x64/apps/yast-sound.svg"
-EXEC="$APP-qt"
+APPIMAGETOOL="https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-$ARCH.AppImage"
+LIB4BN="https://raw.githubusercontent.com/VHSgunzo/sharun/refs/heads/main/lib4bin"
+SHARUN="https://github.com/VHSgunzo/sharun/releases/download/v0.0.2/sharun-$ARCH"
 
-LINUXDEPLOY="https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-static-x86_64.AppImage"
-APPIMAGETOOL=$(wget -q https://api.github.com/repos/probonopd/go-appimage/releases -O - | sed 's/"/ /g; s/ /\n/g' | grep -o 'https.*continuous.*tool.*86_64.*mage$')
+# Prepare AppDir
+mkdir -p ./"$APP"/AppDir
+cd ./"$APP"/AppDir
 
-# CREATE DIRECTORIES
-[ -n "$APP" ] && mkdir -p ./"$APP/$APPDIR" && cd ./"$APP/$APPDIR" || exit 1
+mv /usr/share/applications/pavucontrol-qt.desktop ./
+wget "$ICON" -O multimedia-volume-control.svg
+ln -s ./multimedia-volume-control.png ./.DirIcon
 
-# DOWNLOAD AND BUILD PAVUCONTROL
-CURRENTDIR="$(readlink -f "$(dirname "$0")")" # DO NOT MOVE THIS
-wget "$REPO" -O download.tar.xz && tar fx *tar* && cd pavucontrol* \
-&& sed -i 's/6.6.0/6.4.2/g' ./CMakeLists.txt \
-&& mkdir ./build && cd ./build && cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr .. \
-&& make -j$(nproc) \
-&& DESTDIR="$CURRENTDIR" make install \
-&& cd ../.. && rm -rf ./pavucontrol* ./download.tar.xz || exit 1
-
-# AppRun
 cat >> ./AppRun << 'EOF'
 #!/bin/sh
 CURRENTDIR="$(dirname "$(readlink -f "$0")")"
-"$CURRENTDIR/usr/bin/pavucontrol-qt" "$@"
+"$CURRENTDIR/bin/pavucontrol-qt" "$@"
 EOF
-chmod a+x ./AppRun
+chmod +x ./AppRun
 
-APPVERSION=$(./AppRun --version | awk 'FNR == 1 {print $2}')
+# ADD LIBRARIES
+wget "$LIB4BN" -O ./lib4bin
+wget "$SHARUN" -O ./sharun
+chmod +x ./lib4bin ./sharun
+HARD_LINKS=1 ./lib4bin "$(command -v pavucontrol-qt)"
+rm -f ./lib4bin
 
-# Desktop
-mv ./usr/share/applications/*.desktop ./
+rm -f ./shared/lib/lib.path || true # forces sharun to regenerate the file
+VERSION=$(./AppRun --version | awk 'FNR==1 {print $2; exit}')
 
-# Icon
-wget "$ICON" -O multimedia-volume-control.svg || touch ./multimedia-volume-control.svg
-ln -s ./multimedia-volume-control.png ./.DirIcon
+# MAKE APPIAMGE WITH FUSE3 COMPATIBLE APPIMAGETOOL
+wget -q "$APPIMAGETOOL" -O ./appimagetool 
+chmod +x ./appimagetool
 
-# MAKE APPIMAGE USING FUSE3 COMPATIBLE APPIMAGETOOL
-cd .. && wget "$LINUXDEPLOY" -O linuxdeploy && wget -q "$APPIMAGETOOL" -O ./appimagetool && chmod a+x ./linuxdeploy ./appimagetool \
-&& ./linuxdeploy --appdir "$APPDIR" --plugin qt --executable "$APPDIR"/usr/bin/"$EXEC" && VERSION="$APPVERSION" ./appimagetool -s ./"$APPDIR" || exit 1
+./appimagetool --comp zstd --mksquashfs-opt -Xcompression-level --mksquashfs-opt 22 \
+	-n -u "gh-releases-zsync|$GITHUB_REPOSITORY_OWNER|rofi-AppImage|continuous|*$ARCH.AppImage.zsync" \
+	./"$APP".AppDir "$APP"-"$VERSION"-"$ARCH".AppImage
 
-[ -n "$APP" ] && mv ./*.AppImage .. && cd .. && rm -rf ./"$APP" && echo "All Done!" || exit 1
+mv ./*.AppImage ../
+cd .. 
+rm -rf ./"$APP"
+echo "All Done!"
