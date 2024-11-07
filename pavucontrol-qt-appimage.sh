@@ -6,7 +6,7 @@ export APPIMAGE_EXTRACT_AND_RUN=1
 APP=pavucontrol-qt
 ICON="https://raw.githubusercontent.com/PapirusDevelopmentTeam/papirus-icon-theme/master/Papirus/64x64/apps/yast-sound.svg"
 APPIMAGETOOL="https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-$ARCH.AppImage"
-UPINFO="gh-releases-zsync|$GITHUB_REPOSITORY_OWNER|rofi-AppImage|continuous|*$ARCH.AppImage.zsync"
+UPINFO="gh-releases-zsync|$GITHUB_REPOSITORY_OWNER|pavucontrol-qt-AppImage|latest|*$ARCH.AppImage.zsync"
 LIB4BN="https://raw.githubusercontent.com/VHSgunzo/sharun/refs/heads/main/lib4bin"
 
 # Prepare AppDir
