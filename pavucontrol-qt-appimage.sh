@@ -27,8 +27,7 @@ chmod +x ./AppRun
 
 # ADD LIBRARIES
 wget "$LIB4BN" -O ./lib4bin
-wget "$SHARUN" -O ./sharun
-chmod +x ./lib4bin ./sharun
+chmod +x ./lib4bin
 ./lib4bin -p -w "$(command -v pavucontrol-qt)"
 rm -f ./lib4bin
 
