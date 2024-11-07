@@ -8,8 +8,6 @@ ICON="https://raw.githubusercontent.com/PapirusDevelopmentTeam/papirus-icon-them
 APPIMAGETOOL="https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-$ARCH.AppImage"
 UPINFO="gh-releases-zsync|$GITHUB_REPOSITORY_OWNER|rofi-AppImage|continuous|*$ARCH.AppImage.zsync"
 LIB4BN="https://raw.githubusercontent.com/VHSgunzo/sharun/refs/heads/main/lib4bin"
-SHARUN="$(wget -q https://api.github.com/repos/VHSgunzo/sharun/releases -O - \
-	| sed 's/[()",{} ]/\n/g' | grep -oi "https.*-$ARCH$" | head -1)"
 
 # Prepare AppDir
 mkdir -p ./"$APP"/AppDir/usr/share/applications
@@ -31,7 +29,7 @@ chmod +x ./AppRun
 wget "$LIB4BN" -O ./lib4bin
 wget "$SHARUN" -O ./sharun
 chmod +x ./lib4bin ./sharun
-HARD_LINKS=1 ./lib4bin "$(command -v pavucontrol-qt)"
+./lib4bin -p -w "$(command -v pavucontrol-qt)"
 rm -f ./lib4bin
 
 # DELOY QT
