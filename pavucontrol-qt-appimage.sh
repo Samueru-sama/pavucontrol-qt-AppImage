@@ -21,6 +21,8 @@ ln -s ./multimedia-volume-control.svg ./.DirIcon
 cat >> ./AppRun << 'EOF'
 #!/bin/sh
 CURRENTDIR="$(dirname "$(readlink -f "$0")")"
+[ -f "$APPIMAGE".stylesheet ] && APPIMAGE_QT_THEME="$APPIMAGE.stylesheet"
+[ -f "$APPIMAGE_QT_THEME" ] && set -- "$@" "-stylesheet" "$APPIMAGE_QT_THEME"
 "$CURRENTDIR/bin/pavucontrol-qt" "$@"
 EOF
 chmod +x ./AppRun
